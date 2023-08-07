@@ -1,7 +1,7 @@
 # Dimensionality Reduction for Mahalanobis Distance-based OOD Detection - Official Repository
 
 <p align='center'>
-  <img src="https://github.mdanderson.org/Morfeus-Lab/swin_unetr_med_ood/blob/main/figures/figure3.png" width="300" height="300">
+  <img src="figure3.png" width="300" height="300">
  </p>
 
 **Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
