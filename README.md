@@ -7,10 +7,7 @@
 **Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
 M. Woodland, N. Patel, M. Al Taie, J.P. Yung, T.J. Netherton, A.B. Patel, & K.K. Brock
 
-Abstract: *Clinically deployed segmentation models are known to fail on data outside of their training distribution.
-As these models perform well on most cases, it is imperative to detect out-of-distribution images at inference to protect against automation bias. 
-This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging.
-By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance (92\% area under the receiver operating characteristic curve and 94\% area under the precision-recall curve) and minimal computational load.*
+Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
 
 ## Train the segmentation model
 [Link to code for training the segmentation model](https://github.mdanderson.org/Morfeus-Lab/SMIT-Liver-Segmentation)
