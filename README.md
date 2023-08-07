@@ -1,18 +1,15 @@
 # Dimensionality Reduction for Mahalanobis Distance-based OOD Detection - Official Repository
 
-<p align='center'>
-  <img src="figure3.png" width="300" height="300">
- </p>
-
 **Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
 M. Woodland, N. Patel, M. Al Taie, J.P. Yung, T.J. Netherton, A.B. Patel, & K.K. Brock
 
 Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
 
-## Train the segmentation model
-[Link to code for training the segmentation model](https://github.mdanderson.org/Morfeus-Lab/SMIT-Liver-Segmentation)
+Published in the Proceedings of Uncertainty for Safe Utilization of Machine Learning in Medical Imaging (5th International Workshop) – Held in conjunction with MICCAI 2023
 
-Save off embeddings for all train and test images as `pt` files using `get_encodings.py`. Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
+## Segmentation Model
+
+Train the segmentation model. Then, save off embeddings for all train and test images as `pt` files. Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
  
 ## OOD detection set up
 
