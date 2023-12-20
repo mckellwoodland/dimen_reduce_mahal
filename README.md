@@ -1,11 +1,13 @@
 # Dimensionality Reduction for Improved Mahalanobis Distance: A Strategy for Out-of-Distribution Detection in Medical Image Segmentation - Official Repository
 
+<p align="center"><img src="https://github.com/mckellwoodland/dimen_reduce_mahal/blob/main/figures/figure2_github.png" width="512" alt="The top row contains ID images with the highest Dice Similarity Coefficients (DSCs). The bottom row contains OOD images with the lowest DSCs. The Mahalanobis distances are also shown."</p>
+ 
 **Dimensionality Reduction for Improved Mahalanobis Distance: A Strategy for Out-of-Distribution Detection in Medical Image Segmentation**  
 M. Woodland, N. Patel, M. Al Taie, J.P. Yung, T.J. Netherton, A.B. Patel, & K.K. Brock
 
 Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
 
-Published in the Proceedings of Uncertainty for Safe Utilization of Machine Learning in Medical Imaging (5th International Workshop) – Held in conjunction with MICCAI 2023
+Original article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint of the expansion is available on [arXiv](https://arxiv.org/abs/2308.03723).
 
 ## Segmentation Model
 
@@ -88,3 +90,35 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+# Citation
+
+If you have found our work useful, we would appreciate a citation.
+```
+@InProceedings{10.1007/978-3-031-44336-7_15,
+     author="Woodland, McKell
+             and Patel, Nihil
+             and Al Taie, Mais
+             and Yung, Joshua P.
+             and Netherton, Tucker J.
+             and Patel, Ankit B.
+             and Brock, Kristy K.",
+     editor="Sudre, Carole H.
+             and Baumgartner, Christian F.
+             and Dalca, Adrian
+             and Mehta, Raghav
+             and Qin, Chen
+             and Wells, William M.",
+     title="Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation",
+     booktitle="Uncertainty for Safe Utilization of Machine Learning in Medical Imaging",
+     year="2023",
+     publisher="Springer Nature Switzerland",
+     address="Cham",
+     pages="147--156",
+     isbn="978-3-031-44336-7"
+}
+```
+
+# Acknowledgments
+
+Research reported in this publication was supported in part by the Tumor Measurement Initiative through the MD Anderson Strategic Initiative Development Program (STRIDE), the Helen Black Image Guided Fund, the Image Guided Cancer Therapy Research Program at The University of Texas MD Anderson Cancer Center, a generous gift from the Apache Corporation, and the National Cancer Institute of the National Institutes of Health under award numbers R01CA221971, P30CA016672, and R01CA235564.
