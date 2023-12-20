@@ -1,13 +1,13 @@
-# Dimensionality Reduction for Improved Mahalanobis Distance: A Strategy for Out-of-Distribution Detection in Medical Image Segmentation - Official Repository
+# Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation - Official Repository
 
-<p align="center"><img src="https://github.com/mckellwoodland/dimen_reduce_mahal/blob/main/figures/figure2_github.png" width="512" alt="The top row contains ID images with the highest Dice Similarity Coefficients (DSCs). The bottom row contains OOD images with the lowest DSCs. The Mahalanobis distances are also shown."</p>
+<p align="center"><img src="https://github.com/mckellwoodland/dimen_reduce_mahal/blob/main/figures/figure3.png" width="400" alt="The top row contains ID images with the highest Dice Similarity Coefficients (DSCs). The bottom row contains OOD images with the lowest DSCs. The Mahalanobis distances are also shown."</p>
  
-**Dimensionality Reduction for Improved Mahalanobis Distance: A Strategy for Out-of-Distribution Detection in Medical Image Segmentation**  
+**Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
 McKell Woodland, Nihil Patel, Mais Al Taie, Joshua P. Yung, Tucker J. Netherton, Ankit B. Patel, & Kristy K. Brock
 
 Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
 
-Original article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint of the expansion is available on [arXiv](https://arxiv.org/abs/2308.03723).
+Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
 
 ## Segmentation Model
 
