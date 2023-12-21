@@ -46,9 +46,13 @@ pip install -r requirements.txt
 python fine_tuning_swin_3D.py \
      --pretrained_dir Pre_trained/ \
      --data_dir data/ \
-     --json_list datasets/train.json
+     --json_list datasets/train.json \
+     --max_epochs 1000 \
 ```
-Once trained, save off embeddings for all train and test images as `pt` files. Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
+
+Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
+
+Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
  
 ## OOD detection set up
 
