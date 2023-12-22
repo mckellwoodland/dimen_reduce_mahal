@@ -21,5 +21,9 @@ if not os.path.exists(os.path.join(base_dir, 'imagesTr')):
 if not os.path.exists(os.path.join(base_dir, 'labelsTr')):
   os.mkdir(os.path.join(base_dir, 'labelsTr'))
 
-
+# Main code
+for patient_id in os.listdir(os.path.join(base_dir, 'Train_Sets', 'MR')):
+  for phase in os.listdir(os.path.join(base_dir, 'Train_Sets', 'MR', patient_id, 'T1DUAL', 'DICOM_anon')):
+    dicom2nifti.dicom_series_to_nifti(os.path.join(base_dir, 'Train_Sets', 'MR', patient_id, 'T1DUAL', 'DICOM_anon', phase),
+                                      os.path.join(base_dir, 'imagesTr', f'MR_{patient_id}_T1DUAL_DICOM_anon_{phase}.nii.gz'))
   
