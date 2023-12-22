@@ -1,9 +1,8 @@
 # Base image
 FROM python:3
 
-# Copy files
+# Set up workspace
 WORKDIR /workspace
-COPY . .
 
 # Install dependencies
 RUN pip install -r requirements.txt
