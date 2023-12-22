@@ -1,10 +1,11 @@
 argparse
-monai
-scipy
-torch
+dicom2nifti
 matplotlib
+monai
 numpy
 pandas
-scikit-learn
+pandas
+scipy
+torch
 tqdm
 umap-learn
