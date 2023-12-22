@@ -15,6 +15,16 @@ Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver
 
 Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`.
 
+If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, ...
+
+```
+docker build -t swin_unetr_ood .
+docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
+```
+
+
+
+
 If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `datasets` folder.
 
 ```
