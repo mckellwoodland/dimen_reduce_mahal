@@ -9,9 +9,50 @@ Abstract: *Clinically deployed deep learning-based segmentation models are known
 
 Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
 
+## Data
+
+Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
+
+Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`.
+
+If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `datasets` folder.
+
+```
+{
+  "training": [
+    {
+      "image": "IMG_PATH1",
+      "label": "LABEL_PATH1"
+    },
+    {
+      "image": "IMG_PATH2",
+      "label": "LABEL_PATH2"
+    },
+  ]
+}
+```
+
 ## Segmentation Model
 
-Train the segmentation model. Then, save off embeddings for all train and test images as `pt` files. Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
+Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include updating dependencies so the code can run with the following docker container.
+
+```
+docker pull pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
+docker run -it --rm --gpus all -v $(pwd)/SMIT:/workspace pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
+pip install -r requirements.txt
+```
+
+```
+python fine_tuning_swin_3D.py \
+     --pretrained_dir Pre_trained/ \
+     --data_dir data/ \
+     --json_list datasets/train.json \
+     --max_epochs 1000 \
+```
+
+Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
+
+Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
  
 ## OOD detection set up
 
@@ -118,6 +159,11 @@ If you have found our work useful, we would appreciate a citation.
      isbn="978-3-031-44336-7"
 }
 ```
+
+# References
+1. JI YUANFENG. (2022). Amos: A large-scale abdominal multi-organ benchmark for versatile medical image segmentation [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7155725
+2. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
+3. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
 
 # Acknowledgments
 
