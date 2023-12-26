@@ -4,7 +4,7 @@ matplotlib
 monai
 numpy
 pandas
-pandas
+pillow
 scipy
 torch
 tqdm
