@@ -2,6 +2,7 @@ argparse
 dicom2nifti
 matplotlib
 monai
+nibabel
 numpy
 pandas
 pillow
