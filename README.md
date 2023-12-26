@@ -22,7 +22,12 @@ docker build -t swin_unetr_ood .
 docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 ```
 
+```
+usage: preprocess_CHAOS.py [-h] --base_dir BASE_DIR
 
+Required Arguments:
+  --base_dir BASE_DIR  Path to directory that contains the 'Train_Sets', 'imagesTr', and 'labelsTr' folders.
+```
 
 
 If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `datasets` folder.
