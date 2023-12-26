@@ -2,9 +2,10 @@ argparse
 dicom2nifti
 matplotlib
 monai
+nibabel
 numpy
 pandas
-pandas
+pillow
 scipy
 torch
 tqdm
