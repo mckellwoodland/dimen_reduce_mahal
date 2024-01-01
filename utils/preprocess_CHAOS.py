@@ -26,7 +26,20 @@ if not os.path.exists(os.path.join(base_dir, 'labelsTr')):
   os.mkdir(os.path.join(base_dir, 'labelsTr'))
 
 # Functions
-def png_to_nifti(folder):
+def png_to_nifti(folder, contour=True, val=63):
+  """
+  Converts a folder of PNG images to one NIfTI image.
+  Optionally extracts one contour of many.
+  
+  Inputs:
+    folder (str): Path to folder that contains the PNG images.
+    contour (bool): Whether to extract one contour.
+    val (int): Value of contour to extract.
+               Defaults to 63.
+
+  Output:
+    img_nii (NIfTI): NIfTI image
+  """
   imgs = []
   for img_name in sorted(os.listdir(folder)):
     # Read in PNG image.
@@ -38,7 +51,12 @@ def png_to_nifti(folder):
     imgs.append(img_np_exp)
   # Stack the slices into an image.
   img_np = np.vstack(imgs)
-  # Rotate 90 degrees for NIfTI conversion.
+  # Extract contour.
+  if contour:
+      img_np = (img_np == val).astype(float)
+  # Prepare for NIfTI conversion.
+  img_np = np.transpose(img_np, (1, 2, 0))
+  img_np = np.flip(img_np, axis=0)
   img_np = np.rot90(img_np)
   # Convert to a NIfTI image.
   img_nii = nib.Nifti1Image(img_np, np.eye(4))
