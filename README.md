@@ -29,7 +29,7 @@ Required Arguments:
   --base_dir BASE_DIR  Path to directory that contains the 'Train_Sets', 'imagesTr', and 'labelsTr' folders.
 ```
 
-
+You'll need the `train.json` file in the `datasets` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
 If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `datasets` folder.
 
 ```
