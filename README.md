@@ -13,7 +13,7 @@ Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and 
 
 Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
 
-Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`.
+Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used images with indices 507-600 as these are the MRIs.
 
 If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, ...
 
