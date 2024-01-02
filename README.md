@@ -15,7 +15,7 @@ Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver
 
 Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs.
 
-If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, ...
+If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py` and `preprocess_AMOS.py`.
 
 ```
 docker build -t swin_unetr_ood .
