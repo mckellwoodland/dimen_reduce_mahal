@@ -9,24 +9,40 @@ Abstract: *Clinically deployed deep learning-based segmentation models are known
 
 Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
 
-## Data
-
-Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
-
-Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs.
-
-If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py` and `preprocess_AMOS.py`.
+# Docker
 
 ```
 docker build -t swin_unetr_ood .
 docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 ```
 
+# Data
+
+Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
+
+Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver.
+
+If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py` and `preprocess_AMOS.py`.
+
 ```
-usage: preprocess_CHAOS.py [-h] --base_dir BASE_DIR
+usage: preprocess_CHAOS.py [-h] --base_dir BASE_DIR [--min_val MIN_VAL] [--max_val MAX_VAL]
 
 Required Arguments:
   --base_dir BASE_DIR  Path to directory that contains the 'Train_Sets', 'imagesTr', and 'labelsTr' folders.
+
+Optional Arguments:
+  --min_val MIN_VAL    Minimum pixel value that belongs to the contour to be extracted. Defaults to 55 (liver).
+  --max_val MAX_VAL    Maximum pixel value that belongs to the contour to be extracted. Defaults to 70 (liver).
+```
+
+```
+usage: preprocess_AMOS.py [-h] --base_dir BASE_DIR [--val VAL]
+
+Required Arguments:
+  --base_dir BASE_DIR  Path to directory that contains the 'amos22', 'imagesTr', and 'labelsTr' folders.
+
+Optional Arguments:
+  --val VAL            Voxel value that belongs to the contour to be extracted. Defaults to 6 (liver).
 ```
 
 You'll need the `train.json` file in the `datasets` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
@@ -47,7 +63,7 @@ If you are not using the same training images and preprocessing code, you'll nee
 }
 ```
 
-## Segmentation Model
+# Segmentation Model
 
 Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include updating dependencies so the code can run with the following docker container.
 
@@ -69,12 +85,7 @@ Once trained, save off embeddings for all train and test images as `pt` files. T
 
 Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
  
-## OOD detection set up
-
-Build and run the Docker container.
-```
-docker build -t swin_unetr_ood .
-```
+# OOD Detection
 
 ## Reduce the dimensions of the embeddings.
 
