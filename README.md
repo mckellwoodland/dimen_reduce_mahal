@@ -13,6 +13,8 @@ Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and 
 
 ```
 docker build -t swin_unetr_ood .
+```
+```
 docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 ```
 
