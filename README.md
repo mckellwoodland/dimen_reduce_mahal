@@ -45,8 +45,8 @@ Optional Arguments:
   --val VAL            Voxel value that belongs to the contour to be extracted. Defaults to 6 (liver).
 ```
 
-You'll need the `train.json` file in the `datasets` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
-If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `datasets` folder.
+You'll need the `train.json` file in the `dataset` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
+If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `dataset` folder.
 
 ```
 {
