@@ -4,7 +4,9 @@ Prepares the Duke Liver MRI dataset for training.
 
 # Imports
 import argparse
+import dicom2nifti
 import os
+import tqdm
 
 # Arguments
 parser = argparse.ArgumentParser()
@@ -21,5 +23,22 @@ if not os.path.exists(os.path.join(base_dir, 'labelsTr')):
     os.mkdir(os.path.join(base_dir, 'labelsTr'))
 
 # Functions
-
+def prepend_zeros(num):
+    """
+    Prepends zeros to a number if it is < 100.
+    Input:
+        num (int): The number to be prepended.
+    Output:
+        (str): String with number with preprended zeros.
+    """
+    num_str = str(num)
+    size = len(num_str)
+    return "0"*(3-size)+num_str
+    
 # Main code
+index = 0
+for patient_id in tqdm.tqdm(sorted(os.listdir(os.path.join(base_dir, '7774566', 'Segmentation')))):
+    for img_id in os.listdir(os.path.join(base_dir, '7774566', 'Segmentation', patient_id)):
+        dicom2nifti.dicom_series_to_nifti(os.path.join(base_dir, '7774566', 'Segmentation', patient_id, img_id, images),
+                                          os.path.join(base_dir, 'imagesTr', f'Liver_{prepend_zeros(index)}_0000.nii.gz'))
+        
