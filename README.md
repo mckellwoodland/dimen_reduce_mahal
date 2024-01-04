@@ -77,7 +77,7 @@ pip install -r requirements.txt
 python fine_tuning_swin_3D.py \
      --pretrained_dir Pre_trained/ \
      --data_dir data/ \
-     --json_list datasets/train.json \
+     --json_list dataset/train.json \
      --max_epochs 1000
 ```
 
