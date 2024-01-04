@@ -78,7 +78,7 @@ python fine_tuning_swin_3D.py \
      --pretrained_dir Pre_trained/ \
      --data_dir data/ \
      --json_list datasets/train.json \
-     --max_epochs 1000 \
+     --max_epochs 1000
 ```
 
 Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
