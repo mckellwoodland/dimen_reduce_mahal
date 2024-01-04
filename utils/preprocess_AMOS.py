@@ -10,8 +10,6 @@ import os
 import tqdm
 import nibabel as nib
 
-import numpy as np
-
 # Arguments
 parser = argparse.ArgumentParser()
 parser._action_groups.pop()
