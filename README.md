@@ -24,7 +24,7 @@ Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver
 
 Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
 
-If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, `preprocess_AMOS.py`, and `preprocess_Duke.py`.
+If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. When unzipped, you should see the `Train_Sets` (CHAOS), `amos22` (AMOS), and `7774566` (Duke Liver) folders in the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, `preprocess_AMOS.py`, and `preprocess_Duke.py`.
 
 ```
 usage: preprocess_CHAOS.py [-h] --base_dir BASE_DIR [--min_val MIN_VAL] [--max_val MAX_VAL]
@@ -45,6 +45,16 @@ Required Arguments:
 
 Optional Arguments:
   --val VAL            Voxel value that belongs to the contour to be extracted. Defaults to 6 (liver).
+```
+
+```
+usage: preprocess_Duke.py [-h] --base_dir BASE_DIR [--discard DISCARD]
+
+Required Arguments:
+  --base_dir BASE_DIR  Path to directory that contains the '7774566', 'imagesTr', and 'labelsTr' folders.
+
+Optional Arguments:
+  --discard DISCARD    Whether to discard the images with poor quality. Defaults to True.
 ```
 
 You'll need the `train.json` file in the `dataset` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
