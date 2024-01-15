@@ -201,7 +201,7 @@ If you have found our work useful, we would appreciate a citation.
 # References
 1. JI YUANFENG. (2022). Amos: A large-scale abdominal multi-organ benchmark for versatile medical image segmentation [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7155725
 2. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
-3. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
+3. Ali Emre Kavur, M. Alper Selver, Oğuz Dicle, Mustafa Barış, & N. Sinem Gezer. (2019). CHAOS - Combined (CT-MR) Healthy Abdominal Organ Segmentation Challenge Data (v1.03) [Data set]. The IEEE International Symposium on Biomedical Imaging (ISBI), Venice, Italy. Zenodo. https://doi.org/10.5281/zenodo.3431873
 
 # Acknowledgments
 
