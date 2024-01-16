@@ -7,7 +7,7 @@ McKell Woodland, Nihil Patel, Mais Al Taie, Joshua P. Yung, Tucker J. Netherton,
 
 Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
 
-Article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). Preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
+The article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). The preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
 
 # Docker
 
@@ -22,9 +22,9 @@ docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 
 Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
 
-Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
+Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 61 (image 2205 only), 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
 
-If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, `preprocess_AMOS.py`, and `preprocess_Duke.py`.
+If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. When unzipped, you should see the `Train_Sets` (CHAOS), `amos22` (AMOS), and `7774566` (Duke Liver) folders in the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, `preprocess_AMOS.py`, and `preprocess_Duke.py`.
 
 ```
 usage: preprocess_CHAOS.py [-h] --base_dir BASE_DIR [--min_val MIN_VAL] [--max_val MAX_VAL]
@@ -47,8 +47,18 @@ Optional Arguments:
   --val VAL            Voxel value that belongs to the contour to be extracted. Defaults to 6 (liver).
 ```
 
+```
+usage: preprocess_Duke.py [-h] --base_dir BASE_DIR [--discard DISCARD]
+
+Required Arguments:
+  --base_dir BASE_DIR  Path to directory that contains the '7774566', 'imagesTr', and 'labelsTr' folders.
+
+Optional Arguments:
+  --discard DISCARD    Whether to discard the images with poor quality. Defaults to True.
+```
+
 You'll need the `train.json` file in the `dataset` folder of the forked SMIT repository (branch `dimen_reduce_mahal`).
-If you are not using the same training images and preprocessing code, you'll need to create your own json file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `dataset` folder.
+If you are not using the same training images and preprocessing code, you'll need to create your JSON file following the below pattern containing paths to your images and labels. Name the file `train.json` and put it in the `dataset` folder.
 
 ```
 {
@@ -146,8 +156,8 @@ optional arguments:
 
 Evaluate the AUROC, AUPR, and FPR75 for given Mahalanobis distances.
 
-The distances must be in three csv files: train_distances.csv, test_in_distances.csv, and test_out_distances.csv.
-These csv files must contain a column with the distances entitled 'Mahalanobis Distances'.
+The distances must be in three CSV files: train_distances.csv, test_in_distances.csv, and test_out_distances.csv.
+These CSV files must contain a column with the distances entitled 'Mahalanobis Distances'.
 
 ```
 usage: evaluate_ood.py [-h] result_dir
@@ -191,7 +201,7 @@ If you have found our work useful, we would appreciate a citation.
 # References
 1. JI YUANFENG. (2022). Amos: A large-scale abdominal multi-organ benchmark for versatile medical image segmentation [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7155725
 2. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
-3. Macdonald, J. A., Zhu, Z., Konkel, B., Mazurowski, M., Wiggins, W., & Bashir, M. (2020). Duke Liver Dataset (MRI) v2 (2.0.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.7774566
+3. Ali Emre Kavur, M. Alper Selver, Oğuz Dicle, Mustafa Barış, & N. Sinem Gezer. (2019). CHAOS - Combined (CT-MR) Healthy Abdominal Organ Segmentation Challenge Data (v1.03) [Data set]. The IEEE International Symposium on Biomedical Imaging (ISBI), Venice, Italy. Zenodo. https://doi.org/10.5281/zenodo.3431873
 
 # Acknowledgments
 
