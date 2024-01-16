@@ -29,7 +29,8 @@ if discard:
     discard_img_ids = {9: [4],
                        10:[3,5],
                        11:[4],
-                       18:[3]}
+                       18:[3],
+                       61:[2205]}
 else:
     discard_patient_ids = []
     discard_img_ids = []
@@ -63,4 +64,6 @@ for patient_id in tqdm.tqdm(sorted(os.listdir(os.path.join(base_dir, '7774566', 
         if not poor_quality:
             dicom2nifti.dicom_series_to_nifti(os.path.join(base_dir, '7774566', 'Segmentation', patient_id, img_id, 'images'),
                                               os.path.join(base_dir, 'imagesTr', f'Liver_{prepend_zeros(index)}_0000.nii.gz'))
+            dicom2nifti.dicom_series_to_nifti(os.path.join(base_dir, '7774566', 'Segmentation', patient_id, img_id, 'masks'),
+                                              os.path.join(base_dir, 'labelsTr', f'Liver_{prepend_zeros(index)}.nii.gz'))
         index += 1 
