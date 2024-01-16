@@ -11,12 +11,23 @@ The article was published in the proceedings of the 2023 MICCAI UNSURE workshop 
 
 # Docker
 
+The docker container for our OOD code can be built and run with the following code:
 ```
 docker build -t swin_unetr_ood .
 ```
 ```
 docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 ```
+
+The docker container to train the SMIT model and extract the features can be built and run with the following code:
+```
+docker build -t swin_unetr_smit SMIT/.
+```
+```
+docker run -it --rm --gpus all -v $(pwd)/SMIT:/workspace swin_unetr_smit
+```
+To use this code, you must be on the `dimen_reduce_mahal` branch of the SMIT repository.
+
 
 # Data
 
@@ -77,14 +88,47 @@ If you are not using the same training images and preprocessing code, you'll nee
 
 # Segmentation Model
 
-Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include updating dependencies so the code can run with the following docker container.
+Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include a Dockerfile and updating dependencies so the code can run with the Docker container.
 
 ```
-docker pull pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
-docker run -it --rm --gpus all -v $(pwd)/SMIT:/workspace pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
-pip install -r requirements.txt
+usage: fine_tuning_swin_3D.py [-h] [--checkpoint CHECKPOINT] [--logdir LOGDIR]
+                              [--pretrained_dir PRETRAINED_DIR]
+                              [--data_dir DATA_DIR] [--json_list JSON_LIST]
+                              [--pretrained_model_name PRETRAINED_MODEL_NAME]
+                              [--save_checkpoint] [--max_epochs MAX_EPOCHS]
+                              [--batch_size BATCH_SIZE]
+                              [--sw_batch_size SW_BATCH_SIZE]
+                              [--optim_lr OPTIM_LR] [--optim_name OPTIM_NAME]
+                              [--reg_weight REG_WEIGHT] [--momentum MOMENTUM]
+                              [--noamp] [--val_every VAL_EVERY]
+                              [--distributed] [--world_size WORLD_SIZE]
+                              [--rank RANK] [--dist-url DIST_URL]
+                              [--dist-backend DIST_BACKEND]
+                              [--workers WORKERS] [--model_name MODEL_NAME]
+                              [--pos_embed POS_EMBED] [--norm_name NORM_NAME]
+                              [--num_heads NUM_HEADS] [--mlp_dim MLP_DIM]
+                              [--hidden_size HIDDEN_SIZE]
+                              [--feature_size FEATURE_SIZE]
+                              [--in_channels IN_CHANNELS]
+                              [--out_channels OUT_CHANNELS] [--res_block]
+                              [--conv_block] [--use_normal_dataset]
+                              [--a_min A_MIN] [--a_max A_MAX] [--b_min B_MIN]
+                              [--b_max B_MAX] [--space_x SPACE_X]
+                              [--space_y SPACE_Y] [--space_z SPACE_Z]
+                              [--roi_x ROI_X] [--roi_y ROI_Y] [--roi_z ROI_Z]
+                              [--dropout_rate DROPOUT_RATE]
+                              [--RandFlipd_prob RANDFLIPD_PROB]
+                              [--RandRotate90d_prob RANDROTATE90D_PROB]
+                              [--RandScaleIntensityd_prob RANDSCALEINTENSITYD_PROB]
+                              [--RandShiftIntensityd_prob RANDSHIFTINTENSITYD_PROB]
+                              [--infer_overlap INFER_OVERLAP]
+                              [--lrschedule LRSCHEDULE]
+                              [--warmup_epochs WARMUP_EPOCHS] [--resume_ckpt]
+                              [--resume_jit] [--smooth_dr SMOOTH_DR]
+                              [--smooth_nr SMOOTH_NR]
 ```
 
+We trained the model with the following command:
 ```
 python fine_tuning_swin_3D.py \
      --pretrained_dir Pre_trained/ \
