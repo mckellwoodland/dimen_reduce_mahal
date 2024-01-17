@@ -30,8 +30,8 @@ To use this code, you must be on the `dimen_reduce_mahal` branch of the SMIT rep
 
 
 # Data
-
-Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
+## Training 
+Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset.
 
 Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 61 (image 2205 only), 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
 
@@ -86,7 +86,30 @@ If you are not using the same training images and preprocessing code, you'll nee
 }
 ```
 
+## Testing
+
+In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets. These datasets may be made available upon request, in compliance with institutional IRB requirements.
+
+You'll need the `test.json` file in the `dataset` folder of the SMIT repository. Create the JSON file following the given pattern:
+
+```
+{
+  "training": [],
+  "validation": [
+    {
+      "image": "IMG_PATH1",
+      "label": "LABEL_PATH1"
+    },
+    {
+      "image": "IMG_PATH2",
+      "label": "LABEL_PATH2"
+    }
+  ]
+}
+```
+
 # Segmentation Model
+## Training
 
 Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include a Dockerfile and updating dependencies so the code can run with the Docker container.
 
@@ -137,13 +160,17 @@ python fine_tuning_swin_3D.py \
      --max_epochs 1000
 ```
 
+## Testing
+
+# OOD Detection
+
+## Embeddings extraction
+
 Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
 
 Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
- 
-# OOD Detection
 
-## Reduce the dimensions of the embeddings.
+## Embedding Dimensionality Reduction
 
 Reduce the dimensionality of the embeddings using average pooling, PCA, t-SNE, or UMAP.
 Encodings must be '.pt' files.
