@@ -168,11 +168,13 @@ python fine_tuning_swin_3D.py \
 
 Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
 
-Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
+Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. 
+For our work, ID is distinguished from OOD using the performance of the segmentation model. 
+I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
 
 ## Embedding Dimensionality Reduction
 
-Reduce the dimensionality of the embeddings using average pooling, PCA, t-SNE, or UMAP.
+Reduce the dimensionality of the embeddings using `OOD/reduce_dim.py` with average pooling, PCA, t-SNE, or UMAP.
 Encodings must be '.pt' files.
 
  ```
