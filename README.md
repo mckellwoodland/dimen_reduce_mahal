@@ -11,6 +11,7 @@ The article was published in the proceedings of the 2023 MICCAI UNSURE workshop 
 
 # Docker
 
+The docker container for our OOD code can be built and run with the following code:
 ```
 docker build -t swin_unetr_ood .
 ```
@@ -18,9 +19,19 @@ docker build -t swin_unetr_ood .
 docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
 ```
 
-# Data
+The docker container to train the SMIT model and extract the features can be built and run with the following code:
+```
+docker build -t swin_unetr_smit SMIT/.
+```
+```
+docker run -it --rm --gpus all -v $(pwd)/SMIT:/workspace swin_unetr_smit
+```
+To use this code, you must be on the `dimen_reduce_mahal` branch of the SMIT repository.
 
-Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset. You will need your own test data. 
+
+# Data
+## Training 
+Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset.
 
 Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 61 (image 2205 only), 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
 
@@ -75,16 +86,72 @@ If you are not using the same training images and preprocessing code, you'll nee
 }
 ```
 
+## Testing
+
+In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets. These datasets may be made available upon request, in compliance with institutional IRB requirements.
+
+You'll need the `test.json` file in the `dataset` folder of the SMIT repository. Create the JSON file following the given pattern:
+
+```
+{
+  "training": [],
+  "validation": [
+    {
+      "image": "IMG_PATH1",
+      "label": "LABEL_PATH1"
+    },
+    {
+      "image": "IMG_PATH2",
+      "label": "LABEL_PATH2"
+    }
+  ]
+}
+```
+
 # Segmentation Model
+## Training
 
-Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include updating dependencies so the code can run with the following docker container.
+Train the segmentation model using the `fine_tuning_swin_3d.py` file of the official SMIT repository. A fork of the SMIT repository is included as a submodule. Our changes to the repository can be found in the `dimen_reduce_mahal` branch. Changes include a Dockerfile and updating dependencies so the code can run with the Docker container.
 
 ```
-docker pull pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
-docker run -it --rm --gpus all -v $(pwd)/SMIT:/workspace pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
-pip install -r requirements.txt
+usage: fine_tuning_swin_3D.py [-h] [--checkpoint CHECKPOINT] [--logdir LOGDIR]
+                              [--pretrained_dir PRETRAINED_DIR]
+                              [--data_dir DATA_DIR] [--json_list JSON_LIST]
+                              [--pretrained_model_name PRETRAINED_MODEL_NAME]
+                              [--save_checkpoint] [--max_epochs MAX_EPOCHS]
+                              [--batch_size BATCH_SIZE]
+                              [--sw_batch_size SW_BATCH_SIZE]
+                              [--optim_lr OPTIM_LR] [--optim_name OPTIM_NAME]
+                              [--reg_weight REG_WEIGHT] [--momentum MOMENTUM]
+                              [--noamp] [--val_every VAL_EVERY]
+                              [--distributed] [--world_size WORLD_SIZE]
+                              [--rank RANK] [--dist-url DIST_URL]
+                              [--dist-backend DIST_BACKEND]
+                              [--workers WORKERS] [--model_name MODEL_NAME]
+                              [--pos_embed POS_EMBED] [--norm_name NORM_NAME]
+                              [--num_heads NUM_HEADS] [--mlp_dim MLP_DIM]
+                              [--hidden_size HIDDEN_SIZE]
+                              [--feature_size FEATURE_SIZE]
+                              [--in_channels IN_CHANNELS]
+                              [--out_channels OUT_CHANNELS] [--res_block]
+                              [--conv_block] [--use_normal_dataset]
+                              [--a_min A_MIN] [--a_max A_MAX] [--b_min B_MIN]
+                              [--b_max B_MAX] [--space_x SPACE_X]
+                              [--space_y SPACE_Y] [--space_z SPACE_Z]
+                              [--roi_x ROI_X] [--roi_y ROI_Y] [--roi_z ROI_Z]
+                              [--dropout_rate DROPOUT_RATE]
+                              [--RandFlipd_prob RANDFLIPD_PROB]
+                              [--RandRotate90d_prob RANDROTATE90D_PROB]
+                              [--RandScaleIntensityd_prob RANDSCALEINTENSITYD_PROB]
+                              [--RandShiftIntensityd_prob RANDSHIFTINTENSITYD_PROB]
+                              [--infer_overlap INFER_OVERLAP]
+                              [--lrschedule LRSCHEDULE]
+                              [--warmup_epochs WARMUP_EPOCHS] [--resume_ckpt]
+                              [--resume_jit] [--smooth_dr SMOOTH_DR]
+                              [--smooth_nr SMOOTH_NR]
 ```
 
+We trained the model with the following command:
 ```
 python fine_tuning_swin_3D.py \
      --pretrained_dir Pre_trained/ \
@@ -93,15 +160,21 @@ python fine_tuning_swin_3D.py \
      --max_epochs 1000
 ```
 
-Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
+## Testing
 
-Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. ID is distinguished from OOD using the performance of the segmentation model. I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
- 
 # OOD Detection
 
-## Reduce the dimensions of the embeddings.
+## Embeddings extraction
 
-Reduce the dimensionality of the embeddings using average pooling, PCA, t-SNE, or UMAP.
+Once trained, save off embeddings for all train and test images as `pt` files. This can be done using the `get_encodings.py` file in the forked SMIT repository.
+
+Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings should be put in different folders. 
+For our work, ID is distinguished from OOD using the performance of the segmentation model. 
+I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
+
+## Embedding Dimensionality Reduction
+
+Reduce the dimensionality of the embeddings using `OOD/reduce_dim.py` with average pooling, PCA, t-SNE, or UMAP.
 Encodings must be '.pt' files.
 
  ```
