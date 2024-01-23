@@ -47,7 +47,6 @@ num_comp = args.num_comp
 kernel_size = args.kernel
 stride = args.stride
 dim = args.dim
-assert(dim in ['2D', '3D'])
 
 # Classes
 class AvgPool(nn.Module):
@@ -213,7 +212,7 @@ if reduce_type == 'avgpool':
     save_embeddings(train_out, train_files, train_r, False)
     save_embeddings(ID_out, in_files, in_r, False)
     save_embeddings(OOD_out, out_files, out_r, False)
-elif reduce_type == 'avgpool':
+else:
     save_embeddings(train_out, train_files, train_r, True)
     save_embeddings(ID_out, in_files, in_r, True)
     save_embeddings(OOD_out, out_files, out_r, True)
