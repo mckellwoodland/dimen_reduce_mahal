@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 
 # Arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('result_dir', type=str, help='Path to folder containing the CSVs with the Mahalanobis distances')
+parser.add_argument('--result_dir', type=str, help='Path to folder containing the CSVs with the Mahalanobis distances')
 args = parser.parse_args()
 result_fold = args.result_dir
 

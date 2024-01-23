@@ -14,10 +14,10 @@ import pandas as pd
 
 # Arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('train_dir', type=str, help='Path to folder containing the training embeddings')
-parser.add_argument('ID_dir', type=str, help='Path to folder containing the in-distribution test embeddings')
-parser.add_argument('OOD_dir', type=str, help='Path to folder containing the out-of-distribution test embeddings')
-parser.add_argument('result_dir', type=str, help='Path to folder to put the resulting distances into')
+parser.add_argument('--train_dir', type=str, help='Path to folder containing the training embeddings')
+parser.add_argument('--ID_dir', type=str, help='Path to folder containing the in-distribution test embeddings')
+parser.add_argument('--OOD_dir', type=str, help='Path to folder containing the out-of-distribution test embeddings')
+parser.add_argument('--result_dir', type=str, help='Path to folder to put the resulting distances into')
 
 args = parser.parse_args()
 train_fold = args.train_dir
