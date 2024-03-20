@@ -24,6 +24,7 @@ parser.add_argument('--num_comp', type=int, help='Number of components to use fo
 parser.add_argument('--kernel', type=int, help='Kernel size for average pooling')
 parser.add_argument('--stride', type=int, help='Stride size for average pooling')
 parser.add_argument('--dim', type=str, help='Dimensionality of pooling for average pooling: "2D" or "3D"')
+parser.add_argument('--embed_type', type=str, help='Embedding file type. Options: numpy, torch.')
 
 args = parser.parse_args()
 train_in = args.train_in
@@ -61,9 +62,10 @@ class AvgPool(nn.Module):
         return x
     
 # Functions
-def read_embeddings(folder, is_numpy):
+def read_embeddings(folder, embed_type, is_numpy):
     """
     Read in bottleneck features.
+
     Inputs:
         path (str): Path to the folder that has the encodings.
                     Encodings must be '.pt' files.
@@ -76,7 +78,10 @@ def read_embeddings(folder, is_numpy):
     filenames = []
     for pt_file in os.listdir(folder):
         pt_path = os.path.join(folder, pt_file)
-        encoding = torch.load(pt_path).squeeze()
+        if embed_type == "torch":
+            encoding = torch.load(pt_path).squeeze()
+        elif embed_type == "numpy":
+            encoding = np.load(pt_path).squeeze()
         embeds.append(encoding.flatten())
         filenames.append(pt_file)
     if is_numpy:
@@ -189,13 +194,13 @@ def save_embeddings(folder, filenames, embeddings, is_numpy):
  
 # Read in embeddings.
 if reduce_type == 'avgpool':
-    train, train_files = read_embeddings(train_in, False)
-    in_dist, in_files = read_embeddings(ID_in, False)
-    out_dist, out_files = read_embeddings(OOD_in, False)
+    train, train_files = read_embeddings(train_in, args.embed_type, False)
+    in_dist, in_files = read_embeddings(ID_in, args.embed_type, False)
+    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, False)
 else:
-    train, train_files = read_embeddings(train_in, True)
-    in_dist, in_files = read_embeddings(ID_in, True)
-    out_dist, out_files = read_embeddings(OOD_in, True)    
+    train, train_files = read_embeddings(train_in, args.embed_type, True)
+    in_dist, in_files = read_embeddings(ID_in, args.embed_type, True)
+    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, True)    
 
 # Reduce embeddings.
 if reduce_type == 'avgpool':
