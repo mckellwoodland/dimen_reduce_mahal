@@ -161,8 +161,6 @@ python fine_tuning_swin_3D.py \
      --max_epochs 1000
 ```
 
-## Testing
-
 # OOD Detection
 
 ## Embeddings extraction
