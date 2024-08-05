@@ -11,6 +11,7 @@ import time
 import torch
 import numpy as np
 import pandas as pd
+from sklearn.covariance import MinCovDet
 
 # Arguments
 parser = argparse.ArgumentParser()
@@ -18,6 +19,9 @@ parser.add_argument('--train_dir', type=str, help='Path to folder containing the
 parser.add_argument('--ID_dir', type=str, help='Path to folder containing the in-distribution test embeddings')
 parser.add_argument('--OOD_dir', type=str, help='Path to folder containing the out-of-distribution test embeddings')
 parser.add_argument('--result_dir', type=str, help='Path to folder to put the resulting distances into')
+parser.add_argument('--cov_est', type=str, default='MLE', help='How to estimate the covariance matrix. \
+                                                                      Options: MLE or MCD. \
+                                                                      Default: MLE.')
 
 args = parser.parse_args()
 train_fold = args.train_dir
@@ -67,11 +71,17 @@ train_mean = np.mean(train_embed, axis=0, keepdims=True).squeeze()
 
 print("Calculating matrices")
 start = time.time()
-train_cov = np.cov(train_embed.T)
+
+if args.cov_est == 'MLE':
+    train_cov = np.cov(train_embed.T)
+elif args.cov_est == 'MCD':
+    train_cov = MinCovDet().fit(train_embed).covariance_
+
 print(f"Time to calculate covariance matrix for embedding: {int(time.time() - start)} seconds")
 
 start = time.time()
 train_inv_cov = scipy.linalg.inv(train_cov)
+print(train_inv_cov)
 print(f"Time to calculate inverse covariance matrix for embedding: {time.time() - start} seconds")
     
 # Read in test embeddings.

@@ -13,10 +13,10 @@ The article was published in the proceedings of the 2023 MICCAI UNSURE workshop 
 
 The docker container for our OOD code can be built and run with the following code:
 ```
-docker build -t swin_unetr_ood .
+docker build -t md_ood .
 ```
 ```
-docker run -it --rm -v $(pwd):/workspace swin_unetr_ood
+docker run -it --rm -v $(pwd):/workspace md_ood
 ```
 
 The docker container to train the SMIT model and extract the features can be built and run with the following code:

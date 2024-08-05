@@ -1,12 +1,5 @@
-argparse
-dicom2nifti
-matplotlib
-monai
-nibabel
-numpy
-pandas
-pillow
-scipy
-torch
-tqdm
-umap-learn
+monai==1.3.1
+nibabel==5.2.1
+pandas==2.2.2
+scikit-learn==1.5.0
+umap-learn==0.5.6

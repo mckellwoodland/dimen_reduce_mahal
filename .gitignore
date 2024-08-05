@@ -1,3 +1,7 @@
+.ipynb_checkpoints/
 embeddings/
+figures/
 notebooks/
+OOD/__pycache__/
+outputs/
 sheets/

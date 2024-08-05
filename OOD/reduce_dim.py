@@ -7,6 +7,7 @@ import argparse
 import os
 import torch
 import umap
+import tqdm
 import numpy as np
 from sklearn import decomposition, preprocessing, manifold
 from torch import nn
@@ -25,6 +26,7 @@ parser.add_argument('--kernel', type=int, help='Kernel size for average pooling'
 parser.add_argument('--stride', type=int, help='Stride size for average pooling')
 parser.add_argument('--dim', type=str, help='Dimensionality of pooling for average pooling: "2D" or "3D"')
 parser.add_argument('--embed_type', type=str, help='Embedding file type. Options: numpy, torch.')
+parser.add_argument('--sliding_window', type=str, help='Reduce sliding window dimension with average (avg) or max (max) pooling.')
 
 args = parser.parse_args()
 train_in = args.train_in
@@ -62,27 +64,39 @@ class AvgPool(nn.Module):
         return x
     
 # Functions
-def read_embeddings(folder, embed_type, is_numpy):
+def read_embeddings(folder, embed_type, is_numpy, sliding_window):
     """
     Read in bottleneck features.
 
     Inputs:
         path (str): Path to the folder that has the encodings.
                     Encodings must be '.pt' files.
+        embed_type (str): whether it is a torch or numpy embedding.
         is_numpy (bool): Whether to return the embedding as a NumPy array.
                          Required for PCA, t-SNE, and UMAP.
+        sliding_window (str): whether to reduce the sliding window dimension with average pooling (avg) or max pooling (max). Neither of these values will result in no reduction.
     Returns:
         (array): all encodings
     """
     embeds = []
     filenames = []
-    for pt_file in os.listdir(folder):
+    for pt_file in tqdm.tqdm(os.listdir(folder)):
         pt_path = os.path.join(folder, pt_file)
         if embed_type == "torch":
             encoding = torch.load(pt_path).squeeze()
         elif embed_type == "numpy":
-            encoding = np.load(pt_path).squeeze()
-        embeds.append(encoding.flatten())
+            encoding = np.load(pt_path)
+        if sliding_window == "avg":
+            encoding = np.mean(encoding, axis=0)
+        elif sliding_window == "max":
+            encoding = np.max(encoding, axis=0)
+        if is_numpy:
+            embeds.append(encoding.flatten())
+        else:
+            if embed_type == "torch":
+                embeds.append(encoding)
+            else:
+                embeds.append(torch.from_numpy(encoding))
         filenames.append(pt_file)
     if is_numpy:
         return np.stack(embeds, axis=0), filenames
@@ -105,9 +119,9 @@ def reduce_avgpool(train, in_dist, out_dist, kernel_size, stride, dim):
         OOD_avgpool (array): OOD test embeddings with dimensionality reduced by PCA
     """
     model = AvgPool(kernel_size, stride, dim)
-    train_avgpool = model(train)
-    ID_avgpool = model(in_dist)
-    OOD_avgpool = model(out_dist)
+    train_avgpool = np.array([model(t).numpy().flatten() for t in train])
+    ID_avgpool = np.array([model(i).numpy().flatten() for i in in_dist])
+    OOD_avgpool = np.array([model(o).numpy().flatten() for o in out_dist])
     return train_avgpool, ID_avgpool, OOD_avgpool
   
 def reduce_pca(train, in_dist, out_dist, num_comp):
@@ -194,17 +208,18 @@ def save_embeddings(folder, filenames, embeddings, is_numpy):
  
 # Read in embeddings.
 if reduce_type == 'avgpool':
-    train, train_files = read_embeddings(train_in, args.embed_type, False)
-    in_dist, in_files = read_embeddings(ID_in, args.embed_type, False)
-    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, False)
+    train, train_files = read_embeddings(train_in, args.embed_type, False, args.sliding_window)
+    in_dist, in_files = read_embeddings(ID_in, args.embed_type, False, args.sliding_window)
+    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, False, args.sliding_window)
 else:
-    train, train_files = read_embeddings(train_in, args.embed_type, True)
-    in_dist, in_files = read_embeddings(ID_in, args.embed_type, True)
-    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, True)    
+    train, train_files = read_embeddings(train_in, args.embed_type, True, args.sliding_window)
+    in_dist, in_files = read_embeddings(ID_in, args.embed_type, True, args.sliding_window)
+    out_dist, out_files = read_embeddings(OOD_in, args.embed_type, True, args.sliding_window)
 
 # Reduce embeddings.
 if reduce_type == 'avgpool':
   train_r, in_r, out_r = reduce_avgpool(train, in_dist, out_dist, kernel_size, stride, dim)
+  print(in_r.shape)
 if reduce_type == 'pca':
   train_r, in_r, out_r = reduce_pca(train, in_dist, out_dist, num_comp)
 elif reduce_type == 'tsne':
@@ -213,11 +228,6 @@ elif reduce_type == 'umap':
   train_r, in_r, out_r = reduce_umap(train, in_dist, out_dist, num_comp)
   
 # Save the embeddings
-if reduce_type == 'avgpool':
-    save_embeddings(train_out, train_files, train_r, False)
-    save_embeddings(ID_out, in_files, in_r, False)
-    save_embeddings(OOD_out, out_files, out_r, False)
-else:
-    save_embeddings(train_out, train_files, train_r, True)
-    save_embeddings(ID_out, in_files, in_r, True)
-    save_embeddings(OOD_out, out_files, out_r, True)
+save_embeddings(train_out, train_files, train_r, True)
+save_embeddings(ID_out, in_files, in_r, True)
+save_embeddings(OOD_out, out_files, out_r, True)
