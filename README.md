@@ -89,7 +89,7 @@ If you are not using the same training images and preprocessing code, you'll nee
 
 ## Testing
 
-In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets. These datasets may be made available upon request in compliance with institutional IRB requirements.
+In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets.
 
 You'll need the `test.json` file in the `dataset` folder of the SMIT repository. Create the JSON file following the given pattern:
 
