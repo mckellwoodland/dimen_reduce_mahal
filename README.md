@@ -1,13 +1,14 @@
-# Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation - Official Repository
+# Dimensionality Reduction and Nearest Neighbors for Improving Out-of-Distribution Detection in Medical Image Segmentation - Official Repository
 
-<p align="center"><img src="https://github.com/mckellwoodland/dimen_reduce_mahal/blob/main/figures/figure3.png" width="400" alt="The top row contains ID images with the highest Dice Similarity Coefficients (DSCs). The bottom row contains OOD images with the lowest DSCs. The Mahalanobis distances are also shown."</p>
+<p align="center"><img src="https://github.com/mckellwoodland/dimen_reduce_mahal/blob/main/figures/graph_abstract.png" width="750" alt="Mahalanobis and k-th nearest neighbor distances pipelines with dimensionality-reduced features using either principal component analysis, t-distributed stochastic embeddings, uniform manifold approximation and projection, or average pooling. The encoder is a trained encoder from a U-Net architecture. k is the k-th nearest neighbor."</p>
  
-**Dimensionality Reduction for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
-McKell Woodland, Nihil Patel, Mais Al Taie, Joshua P. Yung, Tucker J. Netherton, Ankit B. Patel, & Kristy K. Brock
+**Dimensionality Reduction and Nearest Neighbors for Improving Out-of-Distribution Detection in Medical Image Segmentation**  
+McKell Woodland, Nihil Patel, Austin Castelo, Mais Al Taie, Mohamed Eltaher, Joshua P. Yung, Tucker J. Netherton, Tiffany L. Calderone, Jessica I. Sanchez, Darrel W. Cleere, Ahmed Elsaiey, Nakul Gupta, David Victor, Laura Beretta, Ankit B. Patel, & Kristy K. Brock
 
-Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models do tend to perform well in most instances, which could exacerbate automation bias. Therefore, it is critical to detect out-of-distribution images at inference to warn the clinicians that the model likely failed. This work applies the Mahalanobis distance post hoc to the bottleneck features of a Swin UNETR model that segments the liver on T1-weighted magnetic resonance imaging. By reducing the dimensions of the bottleneck features with principal component analysis, images the model failed on were detected with high performance and minimal computational load. Specifically, the proposed technique achieved 92% area under the receiver operating characteristic curve and 94% area under the precision-recall curve and can run in seconds on a central processing unit.*
+Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models tend to perform well in most instances, which could exacerbate automation bias. Therefore, detecting out-of-distribution images at inference is critical to warn the clinicians that the model likely failed. This work applied the Mahalanobis distance (MD) post hoc to the bottleneck features of four Swin UNETR and nnU-net models that segmented the liver on T1-weighted magnetic resonance imaging and computed tomography. By reducing the dimensions of the bottleneck features with either principal component analysis or uniform manifold approximation and projection, images the models failed on were detected with high performance and minimal computational load. In addition, this work explored a non-parametric alternative to the MD, a k<sup>th</sup> nearest neighbors distance (KNN). KNN drastically improved scalability and performance over MD when both were applied to raw and average-pooled bottleneck features.*
 
-The article was published in the proceedings of the 2023 MICCAI UNSURE workshop and is available through [Springer](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15). The preprint is available on [arXiv](https://arxiv.org/abs/2308.03723).
+This work was first published in the [proceedings of the 2023 MICCAI UNSURE workshop](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15), where it won the best spotlight paper ([preprint](https://arxiv.org/abs/2308.03723)).
+It was extended to include validation of the dimensionality reduction techniques for three additional liver segmentation models (including extensions to computed tomography and the nnU-net architecture), a novel analysis of the k<sup>th</sup> nearest neighbor distance (KNN) as a replacement for Mahalanobis distance (MD), and greater context into how MD and KNN fit into the larger out-of-distribution detection field by comparing their performance to standard methods.
 
 # Docker
 
@@ -17,7 +18,7 @@ docker build -t md_ood .
 ```
 ```
 docker run -it --rm -v $(pwd):/workspace md_ood
-```
+``` 
 
 The docker container to train the SMIT model and extract the features can be built and run with the following code:
 ```
@@ -33,7 +34,7 @@ To use this code, you must be on the `dimen_reduce_mahal` branch of the SMIT rep
 ## Training 
 Download the [AMOS](https://zenodo.org/records/7155725)<sup>1</sup>, [Duke Liver](https://zenodo.org/records/7774566)<sup>2</sup>, [CHAOS](https://zenodo.org/records/3431873)<sup>3</sup> datasets from Zenodo. You will need to request access to the Duke Liver dataset.
 
-Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600 as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 61 (image 2205 only), 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
+Create a `data` folder in the SMIT repository with subfolders `imagesTr`, `imagesTs`, `labelsTr`, and `labelsTs`. Move all the images from the public datasets into `imagesTr` and the ground truth segmentations into `labelsTr`. For the AMOS dataset, we only used training and validation images with indices 507-600, as these are the MRIs. The labels need to be converted to binary masks of the liver. For the Duke Liver MRI dataset, the images associated with anonymized patient IDs 2, 3, 4, 9 (image 4 only), 10 (images 3 and 5 only), 11 (image 4 only), 17, 18 (image 3 only), 20, 23, 31, 32, 33, 35, 38, 42, 46, 50, 61 (image 2205 only), 63, 74, 75, 78, 83, and 84 were discarded due to either missing liver segments or poor image quality to the point where it was hard to identify the liver.
 
 If you would like to use our preprocessing code, unzip the public datasets into the `data` folder. When unzipped, you should see the `Train_Sets` (CHAOS), `amos22` (AMOS), and `7774566` (Duke Liver) folders in the `data` folder. You can then convert them with our docker container and the dataset preprocessing files in the `utils` folder: `preprocess_CHAOS.py`, `preprocess_AMOS.py`, and `preprocess_Duke.py`.
 
@@ -52,7 +53,7 @@ Optional Arguments:
 usage: preprocess_AMOS.py [-h] --base_dir BASE_DIR [--val VAL]
 
 Required Arguments:
-  --base_dir BASE_DIR  Path to directory that contains the 'amos22', 'imagesTr', and 'labelsTr' folders.
+  --base_dir BASE_DIR  Path to the directory that contains the 'amos22', 'imagesTr', and 'labelsTr' folders.
 
 Optional Arguments:
   --val VAL            Voxel value that belongs to the contour to be extracted. Defaults to 6 (liver).
@@ -88,7 +89,7 @@ If you are not using the same training images and preprocessing code, you'll nee
 
 ## Testing
 
-In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets. These datasets may be made available upon request, in compliance with institutional IRB requirements.
+In the `data` folder of the SMIT repository, create folders `imagesTs` and `labelsTs`. Your testing images should go into `imagesTs` and masks into `labelsTs`. We tested our model on institutional datasets. These datasets may be made available upon request in compliance with institutional IRB requirements.
 
 You'll need the `test.json` file in the `dataset` folder of the SMIT repository. Create the JSON file following the given pattern:
 
@@ -185,18 +186,18 @@ Encodings must be '.pt' files.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --train_in TRAIN_IN   Path to folder containing the input training
+  --train_in TRAIN_IN   Path to the folder containing the input training
                         embeddings
   --train_out TRAIN_OUT
-                        Path to folder to contain the output training
+                        Path to the folder to contain the output training
                         embeddings
-  --ID_in ID_IN         Path to folder containing the input in-distribution
+  --ID_in ID_IN         Path to the folder containing the input in-distribution
                         test embeddings
-  --ID_out ID_OUT       Path to folder to contain the output in-distribution
+  --ID_out ID_OUT       Path to the folder to contain the output in-distribution
                         test embeddings
-  --OOD_in OOD_IN       Path to folder containing the input out-of-
+  --OOD_in OOD_IN       Path to the folder containing the input out-of-
                         distribution test embeddings
-  --OOD_out OOD_OUT     Path to folder to contain the output out-of-
+  --OOD_out OOD_OUT     Path to the folder to contain the output out-of-
                         distribution test embeddings
   --type TYPE           Type of dimensionality reduction to use: "avgpool",
                         "pca", "tsne", or "umap"
@@ -217,12 +218,12 @@ usage: mahalanobis_distance.py [-h] --train_in TRAIN_IN --ID_in ID_IN --OOD_in
 
 optional arguments:
   -h, --help           show this help message and exit
-  --train_in TRAIN_IN  Path to folder containing the training embeddings
-  --ID_in ID_IN        Path to folder containing the in-distribution test
+  --train_in TRAIN_IN  Path to the folder containing the training embeddings
+  --ID_in ID_IN        Path to the folder containing the in-distribution test
                        embeddings
   --OOD_in OOD_IN      Path to folder containing the out-of-distribution test
                        embeddings
-  --result RESULT      Path to folder to put the resulting distances into
+  --result RESULT      Path to the folder to put the resulting distances into
 ```
 
 ## Evaluate the OOD detection.
@@ -236,7 +237,7 @@ These CSV files must contain a column with the distances entitled 'Mahalanobis D
 usage: evaluate_ood.py [-h] result_dir
 
 positional arguments:
-  result_dir  Path to folder containing the CSVs with the Mahalanobis
+  result_dir  Path to the folder containing the CSVs with the Mahalanobis
               distances.
 
 optional arguments:
@@ -278,4 +279,4 @@ If you have found our work useful, we would appreciate a citation.
 
 # Acknowledgments
 
-Research reported in this publication was supported in part by the Tumor Measurement Initiative through the MD Anderson Strategic Initiative Development Program (STRIDE), the Helen Black Image Guided Fund, the Image Guided Cancer Therapy Research Program at The University of Texas MD Anderson Cancer Center, a generous gift from the Apache Corporation, and the National Cancer Institute of the National Institutes of Health under award numbers R01CA221971, P30CA016672, and R01CA235564.
+Research reported in this publication was supported in part by the Tumor Measurement Initiative through the MD Anderson Strategic Initiative Development Program (STRIDE), the Helen Black Image Guided Fund, the Image Guided Cancer Therapy Research Program at The University of Texas MD Anderson Cancer Center, a generous gift from the Apache Corporation, and the National Cancer Institute of the National Institutes of Health under award numbers R01CA221971, R01CA235564, R01CA195524, and P30CA016672. We'd like to thank Dr. Eugene J. Koay, Ph.D., for providing the liver MRI data from MD Anderson and Sarah Bronson - Scientific Editor at the Research Medical Library at MD Anderson - for editing sections of this article.
