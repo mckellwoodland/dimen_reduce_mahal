@@ -171,75 +171,207 @@ Train, in-distribution (ID) test, and out-of-distribution (OOD) test embeddings 
 For our work, ID is distinguished from OOD using the performance of the segmentation model. 
 I.e. >95% Dice similarity coefficient (DSC) is ID, whereas <95% is OOD.
 
-## Embedding Dimensionality Reduction
-
-Reduce the dimensionality of the embeddings using `OOD/reduce_dim.py` with average pooling, PCA, t-SNE, or UMAP.
-Encodings must be '.pt' files.
-
- ```
- usage: reduce_dim.py [-h] --train_in TRAIN_IN --train_out TRAIN_OUT --ID_in
-                     ID_IN --ID_out ID_OUT --OOD_in OOD_IN --OOD_out OOD_OUT
-                     --type TYPE [--num_comp NUM_COMP] [--kernel KERNEL]
-                     [--stride STRIDE] [--dim DIM]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --train_in TRAIN_IN   Path to the folder containing the input training
-                        embeddings
-  --train_out TRAIN_OUT
-                        Path to the folder to contain the output training
-                        embeddings
-  --ID_in ID_IN         Path to the folder containing the input in-distribution
-                        test embeddings
-  --ID_out ID_OUT       Path to the folder to contain the output in-distribution
-                        test embeddings
-  --OOD_in OOD_IN       Path to the folder containing the input out-of-
-                        distribution test embeddings
-  --OOD_out OOD_OUT     Path to the folder to contain the output out-of-
-                        distribution test embeddings
-  --type TYPE           Type of dimensionality reduction to use: "avgpool",
-                        "pca", "tsne", or "umap"
-  --num_comp NUM_COMP   Number of components to use for PCA, t-SNE, or UMAP
-  --kernel KERNEL       Kernel size for average pooling
-  --stride STRIDE       Stride size for average pooling
-  --dim DIM             Dimensionality of pooling for average pooling: "2D" or
-                        "3D"
- ```
-
-## Calculate the Mahalanobis distance.
-
-Calculate the Mahalanobis distance for given embeddings.
+## Mahalanobis distance
 
 ```
-usage: mahalanobis_distance.py [-h] --train_in TRAIN_IN --ID_in ID_IN --OOD_in
-                               OOD_IN --result RESULT
+usage: OOD/calc_md.py [-h] -tr TRAIN_PTH -te TEST_PTH -p PER_SEG_PTH
+                  [-cm CORRELATION_METRIC] [-cp CORRELATION_PTH] [-d DIM]
+                  [-e EMBED_TYPE] [-fc FILE_COL] [-k KERNEL_SIZE]
+                  [-nc NAME_COL] [-n NUM_COMP] [-o OUT_FILE] [-r REDUCE_TYPE]
+                  [-sa SAVE] [-sl SLIDING_WINDOW] [-st STRIDE]
+                  [-t THRES]
 
-optional arguments:
-  -h, --help           show this help message and exit
-  --train_in TRAIN_IN  Path to the folder containing the training embeddings
-  --ID_in ID_IN        Path to the folder containing the in-distribution test
-                       embeddings
-  --OOD_in OOD_IN      Path to folder containing the out-of-distribution test
-                       embeddings
-  --result RESULT      Path to the folder to put the resulting distances into
+Required Arguments:
+  -tr TRAIN_PTH, --train_pth TRAIN_PTH
+                        Path to folder containing training embeddings.
+  -te TEST_PTH, --test_pth TEST_PTH
+                        Path to folder containing testing embeddings.
+  -p PER_SEG_PTH, --per_seg_pth PER_SEG_PTH
+                        Path to CSV files with segmentation performance
+                        results.
+
+Optional Arguments:
+  -cm CORRELATION_METRIC, --correlation_metric CORRELATION_METRIC
+                        Name of the column in the CSV file pointed to by
+                        correlation_path that contains the variable to
+                        calculate the coefficient on. Defaults to None
+  -cp CORRELATION_PTH, --correlation_pth CORRELATION_PTH
+                        A path to a CSV file to calculate the Pearson
+                        correlation coefficient. Filenames must be under
+                        the file_col parameter. Defaults to None.
+  -d DIM, --dim DIM     2- or 3-dimensional average pooling reduction
+                        [2D][3D]. If all average pooling parameters are not given,
+                        a hyperparameter search will be performed. Defaults to
+                        None.
+  -e EMBED_TYPE, --embed_type EMBED_TYPE
+                        Whether the embeddings were saved as Torch embeddings
+                        in .pt files [torch] or as NumPy embeddings in .npy
+                        files [numpy]. Defaults to torch.
+  -fc FILE_COL, --file_col FILE_COL
+                        Name of the column in the segmentation performance CSV
+                        file that contains the filenames. Defaults to
+                        filename.
+  -k KERNEL_SIZE, --kernel_size KERNEL_SIZE
+                        Kernel size for average pooling reduction. If all
+                        average pooling parameters are not given, a hyperparameter
+                        search will be performed. Defaults to None.
+  -nc NAME_COL, --name_col NAME_COL
+                        Name of the column in the segmentation performance CSV
+                        file that contains the dice scores. Defaults to
+                        DICE_Score.
+  -n NUM_COMP, --num_comp NUM_COMP
+                        Number of components to use with dimensionality-
+                        reduction technique. If not given, a hyperparameter
+                        search will be performed. Defaults to None.
+  -o OUT_FILE, --out_file OUT_FILE
+                        txt filename to write output to.
+  -r REDUCE_TYPE, --reduce_type REDUCE_TYPE
+                        The dimensionality reduction technique: no reduction
+                        [none], principal component analysis [pca],
+                        t-distributed stochastic neighbor embeddings [tsne],
+                        uniform manifold and projection [umap], and average
+                        pooling [avgpool]. If None is given, a hyperparameter
+                        search over all techniques will be performed. Defaults
+                        to None.
+  -sa SAVE, --save SAVE
+                        Path to save the distances to. If None is given, the
+                        distances won't be saved. Defaults to None.
+  -sl SLIDING_WINDOW, --sliding_window SLIDING_WINDOW
+                        Whether to reduce the sliding window dimension with
+                        average pooling [avg] or max pooling [max]. Defaults
+                        to no reduction [None].
+  -st STRIDE, --stride STRIDE
+                        Stride for average pooling reduction. If all average
+                        pooling parameters are not given, a hyperparameter search
+                        will be performed. Defaults to None.
+  -t THRES, --thres THRES
+                        Dice similarity coefficient threshold to determine
+                        which images are out-of-distribution. Defaults to None
+                        (median value will be chosen). A value of None will
+                        result in a median threshold.
+
 ```
 
-## Evaluate the OOD detection.
-
-Evaluate the AUROC, AUPR, and FPR75 for given Mahalanobis distances.
-
-The distances must be in three CSV files: train_distances.csv, test_in_distances.csv, and test_out_distances.csv.
-These CSV files must contain a column with the distances entitled 'Mahalanobis Distances'.
+## K<sup>th</sup> Nearest Neighbor
 
 ```
-usage: evaluate_ood.py [-h] result_dir
+usage: OOD/calc_knn.py [-h] -tr TRAIN_PTH -te TEST_PTH [-o OUT_FILE] -p PER_SEG_PTH [-cm CORRELATION_METRIC] [-cp CORRELATION_PTH] [-d DIM] [-e EMBED_TYPE]
+                   [-fc FILE_COL] [-k K] [-ks KERNEL_SIZE] [-nc NAME_COL] [-n NUM_COMP] [-r REDUCE_TYPE] [-sl SLIDING_WINDOW] [-st STRIDE] [-t THRES]
 
-positional arguments:
-  result_dir  Path to the folder containing the CSVs with the Mahalanobis
-              distances.
+Required Arguments:
+  -tr TRAIN_PTH, --train_pth TRAIN_PTH
+                        Path to folder containing training embeddings.
+  -te TEST_PTH, --test_pth TEST_PTH
+                        Path to folder containing testing embeddings.
+  -o OUT_FILE, --out_file OUT_FILE
+                        txt filename to write output to.
+  -p PER_SEG_PTH, --per_seg_pth PER_SEG_PTH
+                        Path to CSV files with segmentation performance results.
 
-optional arguments:
-  -h, --help  show this help message and exit
+Optional Arguments:
+  -cm CORRELATION_METRIC, --correlation_metric CORRELATION_METRIC
+                        Name of the column in the CSV file pointed to by correlation_path that contains the variable to calculate the coefficient on. Defaults to
+                        None
+  -cp CORRELATION_PTH, --correlation_pth CORRELATION_PTH
+                        A path to a CSV file to calculate the Pearson correlation coefficient. Filenames must be under the file_col parameter. Defaults to
+                        None.
+  -d DIM, --dim DIM     2- or 3-dimensional average pooling reduction [2D][3D]. If all average pooling parameters are not given, a hyperparameter search will
+                        be performed. Defaults to None.
+  -e EMBED_TYPE, --embed_type EMBED_TYPE
+                        Whether the embeddings were saved as Torch embeddings in .pt files [torch] or as NumPy embeddings in .npy files [numpy]. Defaults
+                        to torch.
+  -fc FILE_COL, --file_col FILE_COL
+                        Name of the column in the segmentation performance CSV file that contains the filenames. Defaults to filename.
+  -k K                  k in the k-th nearest neighbor distance. If no k is given, a hyperparameter search will be performed. Defaults to None.
+  -ks KERNEL_SIZE, --kernel_size KERNEL_SIZE
+                        Kernel size for average pooling reduction. If all average pooling parameters are not given, a hyperparameter search will be performed.
+                        Defaults to None.
+  -nc NAME_COL, --name_col NAME_COL
+                        Name of the column in the segmentation performance CSV file that contains the dice scores. Defaults to DICE_Score.
+  -n NUM_COMP, --num_comp NUM_COMP
+                        Number of components to use with dimensionality-reduction technique. If not given, a hyperparameter search will be performed.
+                        Defaults to None.
+  -r REDUCE_TYPE, --reduce_type REDUCE_TYPE
+                        The dimensionality reduction technique: no reduction [none], principal component analysis [pca], t-distributed stochastic neighbor
+                        embeddings [tsne], uniform manifold and projection [umap], and average pooling [avgpool]. If None is given, a hyperparameter search
+                        over all techniques will be performed. Defaults to None.
+  -sl SLIDING_WINDOW, --sliding_window SLIDING_WINDOW
+                        Whether to reduce the sliding window dimension with average pooling [avgpool] or max pooling [maxpool]. Defaults to no reduction
+                        [None].
+  -st STRIDE, --stride STRIDE
+                        Stride for average pooling reduction. If all average pooling parameters are not given, a hyperparameter search will be performed.
+                        Defaults to None.
+  -t THRES, --thres THRES
+                        Dice similarity coefficient threshold to determine which images are out-of-distribution. Defaults to 0.95. A value of None will
+                        result in a median threshold.
+```
+
+# Maximum Softmax Probability, Temperature Scaling, and Energy Scoring
+
+```
+usage: OOD/calc_msp.py [-h] -te TEST_PTH [-o OUT_FILE] -p PER_SEG_PTH [-c CALIBRATION] [-cm CORRELATION_METRIC] [-cp CORRELATION_PTH] [-e EMBED_TYPE]
+                   [-fc FILE_COL] [-nc NAME_COL] [-t THRES] [-tem TEMPERATURE]
+
+Required Arguments:
+  -te TEST_PTH, --test_pth TEST_PTH
+                        Path to folder containing testing logits.
+  -o OUT_FILE, --out_file OUT_FILE
+                        txt filename to write output to.
+  -p PER_SEG_PTH, --per_seg_pth PER_SEG_PTH
+                        Path to CSV files with segmentation performance results.
+
+Optional Arguments:
+  -c CALIBRATION, --calibration CALIBRATION
+                        Whether to use temperature scaling [ts] or energy [energy]. Defaults to None.
+  -cm CORRELATION_METRIC, --correlation_metric CORRELATION_METRIC
+                        Name of the column in the CSV file pointed to by correlation_path that contains the variable to calculate the coefficient on. Defaults to
+                        None
+  -cp CORRELATION_PTH, --correlation_pth CORRELATION_PTH
+                        A path to a CSV file to calculate the Pearson correlation coefficient. Filenames must be under the file_col parameter. Defaults to
+                        None.
+  -e EMBED_TYPE, --embed_type EMBED_TYPE
+                        Whether the embeddings were saved as NumPy (.npy) [numpy] or NifTI (.nii.gz) [nifti] embeddings. Defaults to numpy.
+  -fc FILE_COL, --file_col FILE_COL
+                        Name of the column in the segmentation performance CSV file that contains the filenames. Defaults to filename.
+  -nc NAME_COL, --name_col NAME_COL
+                        Name of the column in the segmentation performance CSV file that contains the dice scores. Defaults to DICE_Score.
+  -t THRES, --thres THRES
+                        Dice similarity coefficient threshold to determine which images are out-of-distribution. Defaults to 0.95. A value of None will
+                        result in a median threshold.
+  -tem TEMPERATURE, --temperature TEMPERATURE
+                        Temperature for temperature scaling and energy scoring. Defaults to None. A value of None will result in a temperature search.
+```
+
+## Ensembling and Monte-Carlo Dropout
+
+Save five outputs per test image with the filename suffix `_output{i}.nii.gz` for $i\in\{1,2,3,4,5\}$.
+
+```
+usage: OOD/calc_ensemble.py [-h] -te TEST_PTH [-o OUT_FILE] -p PER_SEG_PTH [-cm CORRELATION_METRIC] [-cp CORRELATION_PTH] [-fc FILE_COL] [-nc NAME_COL]
+                        [-t THRES]
+
+Required Arguments:
+  -te TEST_PTH, --test_pth TEST_PTH
+                        Path to folder containing testing outputs.
+  -o OUT_FILE, --out_file OUT_FILE
+                        txt filename to write output to.
+  -p PER_SEG_PTH, --per_seg_pth PER_SEG_PTH
+                        Path to CSV files with segmentation performance results.
+
+Optional Arguments:
+  -cm CORRELATION_METRIC, --correlation_metric CORRELATION_METRIC
+                        Name of the column in the CSV file pointed to by correlation_path that contains the variable to calculate the coefficient on. Defaults to
+                        None
+  -cp CORRELATION_PTH, --correlation_pth CORRELATION_PTH
+                        A path to a CSV file to calculate the Pearson correlation coefficient. Filenames must be under the file_col parameter. Defaults to
+                        None.
+  -fc FILE_COL, --file_col FILE_COL
+                        Name of the column in the segmentation performance CSV file that contains the filenames. Defaults to filename.
+  -nc NAME_COL, --name_col NAME_COL
+                        Name of the column in the segmentation performance CSV file that contains the dice scores. Defaults to DICE_Score.
+  -t THRES, --thres THRES
+                        Dice similarity coefficient threshold to determine which images are out-of-distribution. Defaults to 0.95. A value of None will
+                        result in a median threshold.
 ```
 
 # Citation
