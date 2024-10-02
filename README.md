@@ -11,6 +11,8 @@ This work is published in [MELBA](https://doi.org/10.59275/j.melba.2024-g93a), w
 This work was first published in the [proceedings of the 2023 MICCAI UNSURE workshop](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15), where it won the best spotlight paper ([preprint](https://arxiv.org/abs/2308.03723)).
 It was extended to include validation of the dimensionality reduction techniques for three additional liver segmentation models (including extensions to computed tomography and the nnU-net architecture), a novel analysis of the k<sup>th</sup> nearest neighbor distance (KNN) as a replacement for Mahalanobis distance (MD), and greater context into how MD and KNN fit into the larger out-of-distribution detection field by comparing their performance to standard methods.
 
+Our initial release of code associated with the manuscript is available/citable via [Zenodo](https://doi.org/10.5281/zenodo.13881989).
+
 # Docker
 
 The docker container for our OOD code can be built and run with the following code:
