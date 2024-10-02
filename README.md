@@ -377,7 +377,23 @@ Optional Arguments:
 
 # Citation
 
-If you have found our work useful, we would appreciate citations to our work.
+If you have found our work useful, we would appreciate citations to our manuscripts and code.
+```
+@software{woodland_2024_13881989,
+  author       = {Woodland, McKell and
+                  Patel, Ankit B. and
+                  Brock, Kristy K.},
+  title        = {{Dimensionality Reduction and Nearest Neighbors for 
+                   Improving Out-of-Distribution Detection in Medical
+                   Image Segmentation - Official Repository}},
+  month        = oct,
+  year         = 2024,
+  publisher    = {Zenodo},
+  version      = {v1.0.0},
+  doi          = {10.5281/zenodo.13881989},
+  url          = {https://doi.org/10.5281/zenodo.13881989}
+}
+```
 ```
 @article{melba:2024:020:woodland,
     title = "Dimensionality Reduction and Nearest Neighbors for Improving Out-of-Distribution Detection in Medical Image Segmentation",
