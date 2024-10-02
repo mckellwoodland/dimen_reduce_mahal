@@ -7,7 +7,7 @@ McKell Woodland, Nihil Patel, Austin Castelo, Mais Al Taie, Mohamed Eltaher, Jos
 
 Abstract: *Clinically deployed deep learning-based segmentation models are known to fail on data outside of their training distributions. While clinicians review the segmentations, these models tend to perform well in most instances, which could exacerbate automation bias. Therefore, detecting out-of-distribution images at inference is critical to warn the clinicians that the model likely failed. This work applied the Mahalanobis distance (MD) post hoc to the bottleneck features of four Swin UNETR and nnU-net models that segmented the liver on T1-weighted magnetic resonance imaging and computed tomography. By reducing the dimensions of the bottleneck features with either principal component analysis or uniform manifold approximation and projection, images the models failed on were detected with high performance and minimal computational load. In addition, this work explored a non-parametric alternative to the MD, a k<sup>th</sup> nearest neighbors distance (KNN). KNN drastically improved scalability and performance over MD when both were applied to raw and average-pooled bottleneck features.*
 
-This work is currently under consideration at a journal, with a preprint available on [arXiv](https://arxiv.org/abs/2408.02761).
+This work is published in [MELBA](https://doi.org/10.59275/j.melba.2024-g93a), with a preprint available on [arXiv](https://arxiv.org/abs/2408.02761).
 This work was first published in the [proceedings of the 2023 MICCAI UNSURE workshop](https://link.springer.com/chapter/10.1007/978-3-031-44336-7_15), where it won the best spotlight paper ([preprint](https://arxiv.org/abs/2308.03723)).
 It was extended to include validation of the dimensionality reduction techniques for three additional liver segmentation models (including extensions to computed tomography and the nnU-net architecture), a novel analysis of the k<sup>th</sup> nearest neighbor distance (KNN) as a replacement for Mahalanobis distance (MD), and greater context into how MD and KNN fit into the larger out-of-distribution detection field by comparing their performance to standard methods.
 
@@ -377,7 +377,21 @@ Optional Arguments:
 
 # Citation
 
-If you have found our work useful, we would appreciate a citation.
+If you have found our work useful, we would appreciate citations to our work.
+```
+@article{melba:2024:020:woodland,
+    title = "Dimensionality Reduction and Nearest Neighbors for Improving Out-of-Distribution Detection in Medical Image Segmentation",
+    author = "Woodland, McKell and Patel, Nihil and Castelo, Austin and Al Taie, Mais and Eltaher, Mohamed and Yung, Joshua P. and Netherton, Tucker J. and Calderone, Tiffany L. and Sanchez, Jessica I. and Cleere, Darrel W. and Elsaiey, Ahmed and Gupta, Nakul and Victor, David and Beretta, Laura and Patel, Ankit B. and Brock, Kristy K.",
+    journal = "Machine Learning for Biomedical Imaging",
+    volume = "2",
+    issue = "UNSURE2023 special issue",
+    year = "2024",
+    pages = "2006--2052",
+    issn = "2766-905X",
+    doi = "https://doi.org/10.59275/j.melba.2024-g93a",
+    url = "https://melba-journal.org/"
+}
+```
 ```
 @InProceedings{10.1007/978-3-031-44336-7_15,
      author="Woodland, McKell
