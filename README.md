@@ -13,6 +13,58 @@ It was extended to include validation of the dimensionality reduction techniques
 
 Our initial release of code associated with the manuscript is available/citable via [Zenodo](https://doi.org/10.5281/zenodo.13881989).
 
+# Liver CT OOD Detection
+
+Updating the codebase for use with applying the liver CT model to 17,000 MDA images.
+The main difference is the addition of the `OOD/calc_distances.py` script.
+This script calculates either the MD or KNN (or both) for a given set of training and test embeddings, without evaluating OOD detection.
+
+```
+usage: calc_distances.py [-h] -tr TRAIN_DIR -te TEST_DIR -o OUT_DIR [-d DISTANCE] [-e EMBED_TYPE] [-r REDUCE_TYPE]
+                         [-s SLIDING_WINDOW] [-k K] [-di DIM] [-ke KERNEL_SIZE] [-st STRIDE] [-n NUM_COMP]
+
+Required Arguments:
+  -tr TRAIN_DIR, --train_dir TRAIN_DIR
+                        Path to directory containing the train image features.
+  -te TEST_DIR, --test_dir TEST_DIR
+                        Path to directory containing the test image features.
+  -o OUT_DIR, --out_dir OUT_DIR
+                        Path to directory to put distances into.
+
+Optional Arguments:
+  -d DISTANCE, --distance DISTANCE
+                        Distance: Mahalanobis distance [md] or k-th nearest neighbor distance [knn]. If None, a
+                        hyperaparameter search will be performed. Defaults to knn.
+  -e EMBED_TYPE, --embed_type EMBED_TYPE
+                        Whether the embeddings were saved as Torch embddings in .pt files [torch], NumPy embeddings
+                        in .npy files [numpy], or NIfTI embeddings in .nii.gz files [nifti].
+  -r REDUCE_TYPE, --reduce_type REDUCE_TYPE
+                        Dimensionality reduction technique: PCA [pca], t-SNE [tsne], UMAP [umap], or average
+                        pooling [avgpool]. If None, a hyperparameter search will be performed. Defaults to None.
+  -s SLIDING_WINDOW, --sliding_window SLIDING_WINDOW
+                        Whether to reduce the sliding window dimension with average pooling [avgpool] or max
+                        pooling [maxpool]. Defaults to no reduction [None].
+
+K-th Nearest Neighbor Distance:
+  -k K                  k in the k-th nearest neighbor distance. If None, a hyperparameter search will be
+                        performed. Defaults to None.
+
+Average Pooling Arguments:
+  -di DIM, --dim DIM    2- or 3-dimensional reduction [2D, 3D]. If None, a hyperparameter search will be performed.
+                        Defaults to None.
+  -ke KERNEL_SIZE, --kernel_size KERNEL_SIZE
+                        Kernel size. If None, a search will be performed over kernel size and stride. Defaults to
+                        None.
+  -st STRIDE, --stride STRIDE
+                        Stride. If None, a search will be performed over kernel size and stride. Defaults to None.
+
+PCA/UMAP/t-SNE Argument:
+  -n NUM_COMP, --num_comp NUM_COMP
+                        Number of components. If None, a hyperparameter search will be performed. Defaults to None.
+```
+
+Docker container with code from this branch was called `md_ood_liver`.
+
 # Docker
 
 The docker container for our OOD code can be built and run with the following code:
