@@ -35,7 +35,7 @@ required.add_argument('-o', '--out_dir', type=str, required=True, help='Path to 
 
 optional = parser.add_argument_group('Optional Arguments')
 optional.add_argument('-d', '--distance', type=none_or_val, default=None, help='Distance: Mahalanobis distance [md] or k-th nearest neighbor distance [knn]. \
-                                                                                If None, a hyperaparameter search will be performed. \
+                                                                                If None, a hyperparameter search will be performed. \
                                                                                 Defaults to knn.')
 optional.add_argument('-e', '--embed_type', type=str, default='numpy', help='Whether the embeddings were saved as Torch embddings in .pt files [torch], \
                                                                              NumPy embeddings in .npy files [numpy], or \
