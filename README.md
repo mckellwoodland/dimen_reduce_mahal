@@ -15,7 +15,7 @@ Our initial release of code associated with the manuscript is available/citable 
 
 # Liver CT OOD Detection
 
-Updating the codebase for use with applying the liver CT model to 17,000 MDA images.
+Updating the codebase for use with applying the liver CT model to ~17,000 MDA images.
 The main difference is the addition of the `OOD/calc_distances.py` script.
 This script calculates either the MD or KNN (or both) for a given set of training and test embeddings, without evaluating OOD detection.
 
