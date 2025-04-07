@@ -26,6 +26,8 @@ parser._action_groups.pop()
 def none_or_val(value):
     if value == "None":
         return None
+    elif value.isdigit():
+        return int(value)
     return value
 
 required = parser.add_argument_group('Required Arguments')
