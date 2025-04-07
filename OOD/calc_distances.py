@@ -1,5 +1,5 @@
 """
-Calculate the distance between embeddings and a distribution of embeddings.
+Calculate the distance between testing embeddings and a distribution of training embeddings.
 """
 # Imports.
 import argparse
