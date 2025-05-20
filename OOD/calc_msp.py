@@ -84,7 +84,7 @@ if __name__=="__main__":
                 if args.calibration == 'energy':
                     logits = torch.from_numpy(logits)
                     uncertainty = -(t*torch.logsumexp(logits / t, dim=0)).numpy()
-                    dists.append(abs(np.mean(uncertainty)))
+                    dists.append(np.mean(uncertainty))
                 else:
                     logits /= t
                     sft = special.softmax(logits,axis=0)
